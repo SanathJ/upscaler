@@ -2,7 +2,19 @@ import tensorflow as tf
 
 from tensorflow.keras.layers import Conv2D, Conv2DTranspose, PReLU
 
-TRAIN_DIM = 64
+TRAIN_DIM = 96
+
+
+def tf_log10(x):
+    numerator = tf.math.log(x)
+    denominator = tf.math.log(tf.constant(10, dtype=numerator.dtype))
+    return numerator / denominator
+
+
+def PSNR(y_true, y_pred):
+    max_pixel = 255.0
+    mse = tf.keras.losses.MeanSquaredError()
+    return 10.0 * tf_log10((max_pixel ** 2) / (mse(y_true, y_pred)))
 
 
 def fsrcnn(d=56, s=12, m=4):
@@ -27,5 +39,5 @@ def fsrcnn(d=56, s=12, m=4):
 
     model.add(Conv2DTranspose(1, 9, padding="same"))
 
-    model.summary()
+    model.compile(optimizer="adam", loss="mse", metrics=[PSNR, "accuracy"])
     return model
