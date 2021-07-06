@@ -8,9 +8,9 @@ from fsrcnn import PSNR, fsrcnn
 
 def main():
     old_model = tf.keras.models.load_model(
-        "train/checkpoint-relu", custom_objects={"PSNR": PSNR}
+        f"{sys.argv[1]}/checkpoint-relu", custom_objects={"PSNR": PSNR}
     )
-    img = cv2.imread(sys.argv[1])
+    img = cv2.imread(sys.argv[2])
 
     height = img.shape[0]
     width = img.shape[1]
@@ -49,7 +49,7 @@ def main():
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit("Usage: python supersample.py /path/to/image.ext")
+    if len(sys.argv) != 3:
+        sys.exit("Usage: python supersample.py training_dir /path/to/image.ext")
     else:
         main()
