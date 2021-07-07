@@ -10,15 +10,22 @@ def main():
     old_model = tf.keras.models.load_model(
         f"{sys.argv[1]}/checkpoint-relu", custom_objects={"PSNR": PSNR}
     )
-    img = cv2.imread(sys.argv[2])
+    model = fsrcnn(input_shape=(None, None, 1))
+    model.set_weights(old_model.get_weights())
+    filename = sys.argv[2]
+
+    pred_image, img = upscale(filename, model)
+    cv2.imwrite("model_out.png", pred_image)
+    cv2.imwrite("cubic_out.png", img)
+
+
+def upscale(filename, model):
+    img = cv2.imread(filename)
 
     height = img.shape[0]
     width = img.shape[1]
 
     (b, g, r) = cv2.split(img)
-
-    model = fsrcnn(input_shape=(None, None, 1))
-    model.set_weights(old_model.get_weights())
 
     b = b.reshape(1, height, width, 1)
     g = g.reshape(1, height, width, 1)
@@ -43,9 +50,7 @@ def main():
     img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC).astype(
         "float32"
     )
-
-    cv2.imwrite("model_out.png", pred_image)
-    cv2.imwrite("cubic_out.png", img)
+    return (pred_image, img)
 
 
 if __name__ == "__main__":
