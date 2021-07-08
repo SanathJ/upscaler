@@ -15,8 +15,8 @@ def main():
     filename = sys.argv[2]
 
     pred_image, img = upscale(filename, model)
-    cv2.imwrite("model_out.png", pred_image)
-    cv2.imwrite("cubic_out.png", img)
+    cv2.imwrite("model_out.png", pred_image, [cv2.IMWRITE_PNG_COMPRESSION, 9])
+    cv2.imwrite("cubic_out.png", img, [cv2.IMWRITE_PNG_COMPRESSION, 9])
 
 
 def upscale(filename, model):
