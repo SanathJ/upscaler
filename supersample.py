@@ -20,32 +20,21 @@ def main():
 
 
 def upscale(filename, model):
-    img = cv2.imread(filename)
+    img = cv2.imread(filename, cv2.IMREAD_UNCHANGED)
 
     height = img.shape[0]
     width = img.shape[1]
 
-    (b, g, r) = cv2.split(img)
-
-    b = b.reshape(1, height, width, 1)
-    g = g.reshape(1, height, width, 1)
-    r = r.reshape(1, height, width, 1)
-
-    with tf.device("/CPU:0"):
-        b_pred = model(b)
-        g_pred = model(g)
-        r_pred = model(r)
+    channels = []
+    for channel in cv2.split(img):
+        channel = channel.reshape(1, height, width, 1)
+        with tf.device("/CPU:0"):
+            channels.append(model(channel).numpy().reshape(height * 2, width * 2))
 
     height *= 2
     width *= 2
 
-    pred_image = cv2.merge(
-        [
-            b_pred.numpy().reshape(height, width),
-            g_pred.numpy().reshape(height, width),
-            r_pred.numpy().reshape(height, width),
-        ]
-    )
+    pred_image = cv2.merge(channels)
 
     img = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC).astype(
         "float32"
