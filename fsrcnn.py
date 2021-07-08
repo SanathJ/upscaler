@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from tensorflow.keras.layers import Conv2D, Conv2DTranspose, PReLU, ReLU
+from tensorflow.keras.layers import Conv2D, Conv2DTranspose, ReLU
 
 TRAIN_DIM = 96
 

@@ -1,5 +1,6 @@
 import cv2
 import os
+import glob
 
 from pathlib import Path
 from fsrcnn import TRAIN_DIM
@@ -39,15 +40,21 @@ def images_to_chunked_pairs(data_dir):
         )
 
         split_image(
-            data_dir + "/split-image", Path(filename).stem, train_image, TRAIN_DIM, 2
+            data_dir + "/split-image", Path(filename).stem, train_image, TRAIN_DIM, 4
         )
         split_image(
-            data_dir + "/split-label", Path(filename).stem, image, TRAIN_DIM * 2, 2
+            data_dir + "/split-label", Path(filename).stem, image, TRAIN_DIM * 2, 4
         )
-
-
-def preprocess(x):
-    x = x.reshape(x.shape[0], x.shape[1], x.shape[2], 1)
-    x = x.astype("float32")
-    # x = x / 255.0
-    return x
+    # delete files that aren't common (edge case when file size is odd and rounding half the dimension
+    # is an exact multiple of TRAIN_DIM)
+    image_names = set(
+        map(lambda x: x.split(os.sep)[-1], glob.glob(f"{data_dir}/split-image/*"))
+    )
+    label_names = set(
+        map(lambda x: x.split(os.sep)[-1], glob.glob(f"{data_dir}/split-label/*"))
+    )
+    for p in image_names.symmetric_difference(label_names):
+        try:
+            os.remove(f"{data_dir}/split-image/{p}")
+        except FileNotFoundError:
+            os.remove(f"{data_dir}/split-label/{p}")
