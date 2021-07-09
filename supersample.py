@@ -3,12 +3,13 @@ import sys
 
 import tensorflow as tf
 
-from fsrcnn import PSNR, fsrcnn
+from fsrcnn import PSNR, fsrcnn, SSIM, MS_SSIM
 
 
 def main():
     old_model = tf.keras.models.load_model(
-        f"{sys.argv[1]}/checkpoint-relu", custom_objects={"PSNR": PSNR}
+        f"{sys.argv[1]}/checkpoint-mse",
+        custom_objects={"PSNR": PSNR, "SSIM": SSIM},
     )
     model = fsrcnn(input_shape=(None, None, 1))
     model.set_weights(old_model.get_weights())

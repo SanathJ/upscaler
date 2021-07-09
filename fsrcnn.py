@@ -17,6 +17,18 @@ def PSNR(y_true, y_pred):
     return 10.0 * tf_log10((max_pixel ** 2) / (mse(y_true, y_pred)))
 
 
+def SSIM(y_true, y_pred):
+    max_pixel = 255.0
+    return 1 - tf.reduce_mean(tf.image.ssim(y_true, y_pred, max_val=max_pixel))
+
+
+def MS_SSIM(y_true, y_pred):
+    max_pixel = 255.0
+    return 1 - tf.reduce_mean(
+        tf.image.ssim_multiscale(y_true, y_pred, max_val=max_pixel)
+    )
+
+
 def fsrcnn(d=56, s=12, m=4, input_shape=(None, None, 1), scale_factor=2):
     model = tf.keras.Sequential()
 
@@ -39,5 +51,5 @@ def fsrcnn(d=56, s=12, m=4, input_shape=(None, None, 1), scale_factor=2):
 
     model.add(Conv2DTranspose(1, 9, strides=scale_factor, padding="same"))
 
-    model.compile(optimizer="adam", loss="mse", metrics=[PSNR, "accuracy"])
+    model.compile(optimizer="adam", loss=SSIM, metrics=[SSIM, PSNR])
     return model

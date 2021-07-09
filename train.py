@@ -7,7 +7,7 @@ import loader
 
 from utils import images_to_chunked_pairs
 
-EPOCHS = 100
+EPOCHS = 50
 
 # 60 - 20 - 20
 TEST_FRACTION = 0.2
@@ -52,7 +52,7 @@ def main():
     # model.compile(optimizer="adam", loss="mse", metrics=[PSNR, "accuracy"])
     model = fsrcnn()
     lr_callback = tf.keras.callbacks.ReduceLROnPlateau(cooldown=15, verbose=1)
-    checkpoint_filepath = f"./{sys.argv[1]}/checkpoint-relu"
+    checkpoint_filepath = f"./{sys.argv[1]}/checkpoint-ssim"
     model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
         filepath=checkpoint_filepath,
         monitor="val_loss",

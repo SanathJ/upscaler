@@ -50,7 +50,7 @@ def split_channels0(image, label):
         tf.expand_dims(label_channels[0], -1), [TRAIN_DIM * 2, TRAIN_DIM * 2, 1]
     )
 
-    return i, l
+    return i, tf.cast(l, tf.float32)
 
 
 def split_channels1(image, label):
@@ -79,7 +79,7 @@ def split_channels1(image, label):
         tf.expand_dims(label_channels[1], -1), [TRAIN_DIM * 2, TRAIN_DIM * 2, 1]
     )
 
-    return i, l
+    return i, tf.cast(l, tf.float32)
 
 
 def split_channels2(image, label):
@@ -109,7 +109,7 @@ def split_channels2(image, label):
         tf.expand_dims(label_channels[2], -1), [TRAIN_DIM * 2, TRAIN_DIM * 2, 1]
     )
 
-    return i, l
+    return i, tf.cast(l, tf.float32)
 
 
 def load(dir):
